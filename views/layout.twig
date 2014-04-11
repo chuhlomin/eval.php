@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="shortcut icon" href="/eval.ico">
+
+    <title>Eval</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/js/libs/bootstrap-3.1.1-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/js/libs/codemirror-4.0/lib/codemirror.css">
+
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+
+<body>
+
+<!-- Fixed navbar -->
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Eval</a>
+        </div>
+        <nav>
+            <form class="nav navbar-form navbar-right">
+                {#<div class="button-with-hotkey">#}
+                    {#<button type="submit" class="btn btn-outline-inverse">Save</button>#}
+                    {#<span class="button-hotkey">Ctrl + S</span>#}
+                {#</div>#}
+                <div class="button-with-hotkey">
+                    <button type="button" class="btn btn-primary" onclick="sendForm()">Eval</button>
+                    <span class="button-hotkey" onclick="saveForm()">Ctrl + Enter</span>
+                </div>
+            </form>
+        </nav>
+    </div>
+</div>
+
+{% block content %}
+{% endblock %}
+
+<!-- Bootstrap core JavaScript
+    ================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="/js/libs/bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
+<script src="/js/libs/KeyboardJS-0.4.2/keyboard.js"></script>
+
+<script src="/js/libs/codemirror-4.0/lib/codemirror.js"></script>
+<script src="/js/libs/codemirror-4.0/mode/htmlmixed/htmlmixed.js"></script>
+<script src="/js/libs/codemirror-4.0/mode/xml/xml.js"></script>
+<script src="/js/libs/codemirror-4.0/mode/javascript/javascript.js"></script>
+<script src="/js/libs/codemirror-4.0/mode/css/css.js"></script>
+<script src="/js/libs/codemirror-4.0/mode/clike/clike.js"></script>
+<script src="/js/libs/codemirror-4.0/mode/php/php.js"></script>
+{#<script src="/js/libs/codemirror/util/formatting.js"></script>#}
+{#<script src="/js/libs/codemirror/util/foldcode.js"></script>#}
+{#<script src="/js/libs/codemirror/util/searchcursor.js"></script>#}
+{#<script src="/js/libs/codemirror/util/match-highlighter.js"></script>#}
+{#<script src="/js/libs/codemirror/xml/xml.js"></script>#}
+{#<script src="/js/libs/codemirror/css/css.js"></script>#}
+{#<script src="/js/libs/codemirror/clike/clike.js"></script>#}
+
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        lineNumbers: true,
+        matchBrackets: true,
+        mode: "application/x-httpd-php",
+        indentUnit: 4,
+        indentWithTabs: true,
+        enterMode: "keep",
+        tabMode: "shift"
+    });
+
+    var sendForm = function() {
+        $('#code-form').submit();
+    };
+
+    var saveForm = function() {
+        console.log('save');
+    };
+
+    KeyboardJS.on(
+        'ctrl + enter',
+        function() {
+            sendForm();
+        }
+    );
+
+    KeyboardJS.on(
+        'ctrl + s',
+        function() {
+            saveForm();
+            return false;
+        }
+    );
+
+</script>
+
+</body>
+</html>

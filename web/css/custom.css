@@ -1,0 +1,62 @@
+body {
+    padding-top: 85px;
+}
+
+.navbar-default .navbar-brand {
+    font-weight: bolder;
+    font-size: 20px;
+    line-height: 35px;
+    text-shadow: 0 1px 0 white;
+    color: #aaa;
+}
+
+.navbar-form .btn {
+    padding: 6px 20px;
+}
+
+.navbar-form .btn-primary {
+    font-weight: bold;
+}
+
+.button-with-hotkey {
+    float: left;
+    margin-left: 1em;
+}
+.button-with-hotkey .button-hotkey {
+    display: block;
+    font-size: 8pt;
+    font-weight: bold;
+    color: #999;
+    text-shadow: 0 1px 0 white;
+    text-align: center;
+}
+
+.btn-outline-inverse {
+    font-weight: normal;
+    background-color: transparent;
+    border-color: #cdbfe3;
+}
+
+#code-form {
+    margin: 1em 0;
+}
+
+.output-wrapper {
+    margin-top: 1em;
+    padding: 1em;
+    background: #999;
+    color: #fefefe;
+}
+
+.output-wrapper .output {
+    white-space: pre;
+    font-family: "Consolas", monospace;
+}
+
+.CodeMirror {
+    height: auto;
+}
+.CodeMirror-scroll {
+    overflow-y: hidden;
+    overflow-x: auto;
+}
