@@ -6,9 +6,18 @@ use Symfony\Component\HttpFoundation\Request;
 
 $app = new Silex\Application();
 
-$app->register(new Silex\Provider\TwigServiceProvider(), ['twig.path' => __DIR__.'/../views']);
+$app->register(new Silex\Provider\TwigServiceProvider(), ['twig.path' => __DIR__ . '/../views']);
+
+$app->register(new SilexPhpRedis\PhpRedisProvider(), array(
+    'redis.host' => '127.0.0.1',
+    'redis.port' => 6379,
+    'redis.timeout' => 30,
+    'redis.persistent' => true
+));
 
 $app['debug'] = true;
+//error_reporting(E_ALL);
+//ini_set('display_errors', true);
 
 $defaultCode = '
 <?php
@@ -26,15 +35,22 @@ $variable->field = \'string\';
 
 print_r($variable->field);';
 
-$app->get('/', function() use ($app, $defaultCode) {
+/**
+ * @return string
+ */
+function getKey()
+{
+    return substr(md5(uniqid()), 0, rand(7, 12));
+}
 
+$app->get('/', function () use ($app, $defaultCode) {
     return $app['twig']->render('content.twig', [
         'output' => null,
         'code' => $defaultCode,
     ]);
 });
 
-$app->post('/', function(Request $request) use ($app) {
+$app->post('/', function (Request $request) use ($app) {
     $code = $request->request->get('code');
 
     $clearCode = substr($code, 5);
@@ -46,6 +62,22 @@ $app->post('/', function(Request $request) use ($app) {
     return $app['twig']->render('content.twig', [
         'code' => $code,
         'output' => $output
+    ]);
+});
+
+$app->post('/save', function (Request $request) use ($app) {
+    $code = $request->request->get('code');
+
+    $key = getKey();
+
+    /** @var Redis $redis */
+    $redis = $app['redis'];
+
+    $success = $redis->setnx($key, $code);
+
+    return json_encode([
+        'success' => $success,
+        'result' => $key
     ]);
 });
 
