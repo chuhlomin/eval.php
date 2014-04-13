@@ -28,13 +28,23 @@
         </div>
         <nav>
             <form class="nav navbar-form navbar-right">
-                <div class="button-with-hotkey">
-                    <button type="button" class="btn btn-outline-inverse" onclick="saveForm()">Save</button>
-                    <span class="button-hotkey">Ctrl + S</span>
-                </div>
+                {% if isSaveAvailable is defined %}
+                    {%  if isSaveAvailable %}
+                        <div class="button-with-hotkey">
+                            <button type="button" class="btn btn-outline-inverse" onclick="saveForm()">Save</button>
+                            <div class="button-hotkey" data-os="mac">⌘ + S</div>
+                            <div class="button-hotkey" data-os="windows">Ctrl + S</div>
+                        </div>
+                    {% else %}
+                        <div class="button-with-hotkey">
+                            <button type="button" class="btn btn-outline-inverse disabled" data-toggle="tooltip" data-placement="bottom" title="Unavailable to save">Save</button>
+                        </div>
+                    {% endif %}
+                {% endif %}
                 <div class="button-with-hotkey">
                     <button type="button" class="btn btn-primary" onclick="sendForm()">Eval</button>
-                    <span class="button-hotkey">Ctrl + Enter</span>
+                    <div class="button-hotkey" data-os="mac">⌘ + Enter</div>
+                    <div class="button-hotkey" data-os="windows">Ctrl + Enter</div>
                 </div>
             </form>
         </nav>
@@ -50,6 +60,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="/js/libs/bootstrap-3.1.1-dist/js/bootstrap.min.js"></script>
 <script src="/js/libs/KeyboardJS-0.4.2/keyboard.js"></script>
+<script src="/js/jquery.client.js"></script>
 
 <script src="/js/libs/codemirror-4.0/lib/codemirror.js"></script>
 <script src="/js/libs/codemirror-4.0/mode/htmlmixed/htmlmixed.js"></script>
@@ -102,8 +113,22 @@
         );
     };
 
-    KeyboardJS.on('ctrl + enter', function() { sendForm(); });
-    KeyboardJS.on('ctrl + s', function() { saveForm(); return false; });
+    var os = $.client.os.toLowerCase();
+    $('body').attr('data-os', os);
+
+    if (os == 'mac') {
+        KeyboardJS.on('command + enter', function() { sendForm(); });
+        KeyboardJS.on('command + s', function() { saveForm(); return false; });
+
+        $('.button-hotkey[data-os="windows"]').hide();
+        $('.button-hotkey[data-os="mac"]').show();
+    }
+    else if (os == 'windows') {
+        KeyboardJS.on('ctrl + enter', function() { sendForm(); });
+        KeyboardJS.on('ctrl + s', function() { saveForm(); return false; });
+    }
+
+    $('[data-toggle=tooltip]').tooltip();
 
 </script>
 

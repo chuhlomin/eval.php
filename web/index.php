@@ -16,8 +16,6 @@ $app->register(new SilexPhpRedis\PhpRedisProvider(), array(
 ));
 
 $app['debug'] = true;
-//error_reporting(E_ALL);
-//ini_set('display_errors', true);
 
 $defaultCode = '
 <?php
@@ -43,10 +41,30 @@ function getKey()
     return substr(md5(uniqid()), 0, rand(7, 12));
 }
 
+/**
+ * @param $app
+ * @return bool
+ */
+function getIsSaveAvailable($app)
+{
+    $extensionLoaded = extension_loaded('redis');
+    $classExists = class_exists('Redis');
+
+    try {
+        $serverIsAlive = $app['redis']->ping();
+    }
+    catch (Exception $e) {
+        $serverIsAlive = false;
+    }
+
+    return $extensionLoaded && $classExists && $serverIsAlive;
+}
+
 $app->get('/', function () use ($app, $defaultCode) {
     return $app['twig']->render('content.twig', [
         'output' => null,
         'code' => $defaultCode,
+        'isSaveAvailable' => getIsSaveAvailable($app)
     ]);
 });
 
@@ -61,7 +79,8 @@ $app->post('/', function (Request $request) use ($app) {
 
     return $app['twig']->render('content.twig', [
         'code' => $code,
-        'output' => $output
+        'output' => $output,
+        'isSaveAvailable' => getIsSaveAvailable($app)
     ]);
 });
 
