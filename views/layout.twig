@@ -26,6 +26,7 @@
         <div class="navbar-header">
             <a class="navbar-brand" href="#">Eval</a>
             <form class="nav navbar-form navbar-left" id="codeID">
+                <div id="loader"></div>
                 <input type="text" value="" class="form-control">
 
             </form>
@@ -94,6 +95,9 @@
 
     var sendForm = function() {
         editor.save();
+
+        var timeStart = new Date().getTime();
+
         $.ajax(
             '/eval',
             {
@@ -103,14 +107,25 @@
                     'code': $('#code').val()
                 },
                 beforeSend: function () {
+                    $('#loader').fadeIn();
+                    $('#result').addClass('text-muted');
+
 
                 },
                 complete: function (jqXHR, textStatus) {
-                    if (textStatus == 'success') {
-                    }
+                    var timeDiff = new Date().getTime() - timeStart;
 
-                    $('.output-wrapper .result').html(jqXHR.responseJSON.output);
-                    $('.output').fadeIn();
+                    setTimeout(function() {
+                        $('#loader').fadeOut();
+
+                        if (textStatus == 'success') {
+                        }
+                        $('#result')
+                                .html(jqXHR.responseJSON.output)
+                                .removeClass('text-muted');
+
+                        $('.output').fadeIn();
+                    }, 500 - timeDiff);
                 }
             }
         );
@@ -118,6 +133,9 @@
 
     var saveForm = function() {
         editor.save();
+
+        var timeStart = new Date().getTime();
+
         $.ajax(
             '/save',
             {
@@ -127,14 +145,20 @@
                     'code': $('#code').val()
                 },
                 beforeSend: function () {
-
+                    $('#loader').fadeIn();
                 },
                 complete: function (jqXHR, textStatus) {
-                    if (textStatus == 'success') {
-                        var id = jqXHR.responseJSON.result;
-                        $('#codeID .form-control').val(id);
-                        document.location.href = '?#' + id;
-                    }
+                    var timeDiff = new Date().getTime() - timeStart;
+
+                    setTimeout(function() {
+                        $('#loader').fadeOut();
+
+                        if (textStatus == 'success') {
+                            var id = jqXHR.responseJSON.result;
+                            $('#codeID .form-control').val(id);
+                            document.location.href = '?#' + id;
+                        }
+                    }, 500 - timeDiff);
                 }
             }
         );
@@ -159,6 +183,46 @@
 
     $('[data-toggle=tooltip]').tooltip();
 
+</script>
+
+<script type="text/javascript" src="/js/canvas.js"></script>
+<script type="text/javascript">
+    var cSpeed=9;
+    var cWidth=20;
+    var cHeight=20;
+    var cTotalFrames=12;
+    var cFrameWidth=20;
+    var cImageSrc='/images/sprites.png';
+
+    var cImageTimeout=false;
+
+    function startAnimation(){
+
+        document.getElementById('loader').innerHTML='<canvas id="canvas" width="'+cWidth+'" height="'+cHeight+'"><p>Your browser does not support the canvas element.</p></canvas>';
+
+        FPS = Math.round(100/cSpeed);
+        SECONDS_BETWEEN_FRAMES = 1 / FPS;
+        g_GameObjectManager = null;
+        g_run=genImage;
+
+        g_run.width=cTotalFrames*cFrameWidth;
+        genImage.onload=function (){cImageTimeout=setTimeout(fun, 0)};
+        initCanvas();
+    }
+
+
+    function imageLoader(s, fun)//Pre-loads the sprites image
+    {
+        clearTimeout(cImageTimeout);
+        cImageTimeout=0;
+        genImage = new Image();
+        genImage.onload=function (){cImageTimeout=setTimeout(fun, 0)};
+        genImage.onerror=new Function('alert(\'Could not load the image\')');
+        genImage.src=s;
+    }
+
+    //The following code starts the animation
+    new imageLoader(cImageSrc, 'startAnimation()');
 </script>
 
 </body>

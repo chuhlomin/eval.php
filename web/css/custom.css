@@ -15,10 +15,16 @@ body {
     pointer-events: auto;
 }
 
+.navbar .container {
+    position: relative;
+}
+
 .navbar-default .navbar-brand {
+    padding: 0 15px;
+    line-height: 65px;
+    height: 65px;
     font-weight: bolder;
     font-size: 20px;
-    line-height: 35px;
     text-shadow: 0 1px 0 white;
     color: #aaa;
 }
@@ -73,9 +79,14 @@ body {
     color: #fefefe;
 }
 
-.output-wrapper .result {
+#result {
     white-space: pre;
     font-family: "Consolas", monospace;
+    transition: 0.5s color ease;
+}
+
+#result.text-muted {
+    color: #bbb;
 }
 
 .CodeMirror {
@@ -84,4 +95,11 @@ body {
 .CodeMirror-scroll {
     overflow-y: hidden;
     overflow-x: auto;
+}
+
+#loader {
+    display: none;
+    position: absolute;
+    top: 22px;
+    left: -20px;
 }
