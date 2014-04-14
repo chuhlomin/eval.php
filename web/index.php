@@ -68,19 +68,23 @@ $app->get('/', function () use ($app, $defaultCode) {
     ]);
 });
 
-$app->post('/', function (Request $request) use ($app) {
+$app->post('/eval', function (Request $request) use ($app) {
     $code = $request->request->get('code');
 
     $clearCode = substr($code, 5);
 
     ob_start();
-    eval($clearCode);
+    try {
+        eval($clearCode);
+    }
+    catch (Exception $e) {
+        echo $e->getCode();
+    }
     $output = ob_get_clean();
 
-    return $app['twig']->render('content.twig', [
-        'code' => $code,
-        'output' => $output,
-        'isSaveAvailable' => getIsSaveAvailable($app)
+    return json_encode([
+        'success' => true,
+        'output' => $output
     ]);
 });
 

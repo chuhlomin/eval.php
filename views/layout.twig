@@ -25,13 +25,17 @@
     <div class="container">
         <div class="navbar-header">
             <a class="navbar-brand" href="#">Eval</a>
+            <form class="nav navbar-form navbar-left" id="codeID">
+                <input type="text" value="" class="form-control">
+
+            </form>
         </div>
         <nav>
             <form class="nav navbar-form navbar-right">
                 {% if isSaveAvailable is defined %}
                     {%  if isSaveAvailable %}
                         <div class="button-with-hotkey">
-                            <button type="button" class="btn btn-outline-inverse" onclick="saveForm()">Save</button>
+                            <button type="submit" class="btn btn-outline-inverse" onclick="saveForm(); return false;">Save</button>
                             <div class="button-hotkey" data-os="mac">⌘ + S</div>
                             <div class="button-hotkey" data-os="windows">Ctrl + S</div>
                         </div>
@@ -42,7 +46,7 @@
                     {% endif %}
                 {% endif %}
                 <div class="button-with-hotkey">
-                    <button type="button" class="btn btn-primary" onclick="sendForm()">Eval</button>
+                    <button type="submit" class="btn btn-primary" onclick="sendForm(); return false;">Eval</button>
                     <div class="button-hotkey" data-os="mac">⌘ + Enter</div>
                     <div class="button-hotkey" data-os="windows">Ctrl + Enter</div>
                 </div>
@@ -89,10 +93,31 @@
     });
 
     var sendForm = function() {
-        $('#code-form').submit();
+        editor.save();
+        $.ajax(
+            '/eval',
+            {
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    'code': $('#code').val()
+                },
+                beforeSend: function () {
+
+                },
+                complete: function (jqXHR, textStatus) {
+                    if (textStatus == 'success') {
+                    }
+
+                    $('.output-wrapper .result').html(jqXHR.responseJSON.output);
+                    $('.output').fadeIn();
+                }
+            }
+        );
     };
 
     var saveForm = function() {
+        editor.save();
         $.ajax(
             '/save',
             {
@@ -106,7 +131,9 @@
                 },
                 complete: function (jqXHR, textStatus) {
                     if (textStatus == 'success') {
-                        alert(jqXHR.responseJSON.result);
+                        var id = jqXHR.responseJSON.result;
+                        $('#codeID .form-control').val(id);
+                        document.location.href = '?#' + id;
                     }
                 }
             }
