@@ -25,9 +25,7 @@
     <div class="container">
         <div class="navbar-header">
             <a class="navbar-brand" href="#">Eval</a>
-            <form class="nav navbar-form navbar-left" id="codeID">
-                <input type="text" value="" class="form-control">
-            </form>
+            <p class="navbar-text" id="codeID"></p>
             <div id="loader"></div>
         </div>
         <nav>
@@ -154,7 +152,7 @@
 
                         if (textStatus == 'success') {
                             var id = jqXHR.responseJSON.result;
-                            $('#codeID .form-control').val(id);
+                            $('#codeID').text(id);
                             document.location.href = '?#' + id;
                         }
                     }, 500 - timeDiff);
@@ -162,6 +160,32 @@
             }
         );
     };
+
+    var id = document.location.href.split('?#',2)[1];
+    if (id) {
+        var timeStart = new Date().getTime();
+
+        $.ajax(
+                '/load/' + id,
+                {
+                    type: 'get',
+                    dataType: 'json',
+                    beforeSend: function () {
+                        $('#loader').fadeIn();
+                    },
+                    complete: function (jqXHR, textStatus) {
+                        var timeDiff = new Date().getTime() - timeStart;
+
+                        setTimeout(function() {
+                            $('#loader').fadeOut();
+                            $('#codeID').val(id);
+                            editor.setValue(jqXHR.responseJSON.code);
+
+                        }, 500 - timeDiff);
+                    }
+                }
+        );
+    }
 
     var os = $.client.os.toLowerCase();
     $('body').attr('data-os', os);

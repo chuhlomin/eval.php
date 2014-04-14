@@ -3,14 +3,12 @@ body {
 }
 
 #codeID {
-    margin-top: 15px;
+    margin: 26px 0 0;
     padding-left: 0;
+    font-family: "Consolas", monospace;
+    font-weight: bold;
+    color: #aaa;
 }
-    #codeID .form-control {
-        width: 130px;
-        font-family: "Consolas", monospace;
-        background: transparent;
-    }
 
 .btn.disabled {
     pointer-events: auto;

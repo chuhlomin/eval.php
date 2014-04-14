@@ -20,18 +20,7 @@ $app['debug'] = true;
 $defaultCode = '
 <?php
 
-abstract class Boo {
-	private $field;
-}
-
-class Foo extends Boo {
-
-}
-
-$variable = new Foo();
-$variable->field = \'string\';
-
-print_r($variable->field);';
+// write your code here';
 
 /**
  * @return string
@@ -61,11 +50,23 @@ function getIsSaveAvailable($app)
 }
 
 $app->get('/', function () use ($app, $defaultCode) {
+
     return $app['twig']->render('content.twig', [
         'output' => null,
         'code' => $defaultCode,
         'isSaveAvailable' => getIsSaveAvailable($app)
     ]);
+});
+
+$app->get('/load/{id}', function ($id) use ($app, $defaultCode) {
+
+    $code = $app['redis']->get($id);
+
+    return json_encode([
+        'success' => true,
+        'code' => $code
+    ]);
+
 });
 
 $app->post('/eval', function (Request $request) use ($app) {
@@ -93,10 +94,7 @@ $app->post('/save', function (Request $request) use ($app) {
 
     $key = getKey();
 
-    /** @var Redis $redis */
-    $redis = $app['redis'];
-
-    $success = $redis->setnx($key, $code);
+    $success = $app['redis']->setnx($key, $code);
 
     return json_encode([
         'success' => $success,
