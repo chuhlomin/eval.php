@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="shortcut icon" href="/eval.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
 
     <title>Eval</title>
 
@@ -116,6 +116,8 @@
     var os = $.client.os.toLowerCase();
     $('body').attr('data-os', os);
 
+    console.log(os);
+
     if (os == 'mac') {
         KeyboardJS.on('command + enter', function() { sendForm(); });
         KeyboardJS.on('command + s', function() { saveForm(); return false; });
@@ -123,7 +125,7 @@
         $('.button-hotkey[data-os="windows"]').hide();
         $('.button-hotkey[data-os="mac"]').show();
     }
-    else if (os == 'windows') {
+    else if (os == 'windows' || os == 'linux') {
         KeyboardJS.on('ctrl + enter', function() { sendForm(); });
         KeyboardJS.on('ctrl + s', function() { saveForm(); return false; });
     }
