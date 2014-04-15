@@ -14,6 +14,8 @@ Requirements:
 * redis
 * php5-redis
 * php5-json
+* bower (for js dependencies)
+* npm
 
 Installation: 
 -------------
@@ -21,6 +23,8 @@ Installation:
 ~~~
 curl -sS https://getcomposer.org/installer | php
 php composer.phar install
+bower update
+grunt install
 ~~~
 
 Example of nginx config:

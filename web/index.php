@@ -1,5 +1,8 @@
 <?php
 
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
@@ -58,12 +61,31 @@ $app->get('/', function () use ($app, $defaultCode) {
     ]);
 });
 
+$app->get('/runkit', function () use ($app, $defaultCode) {
+
+    $sandbox = new Runkit_Sandbox([
+        'safe_mode' => true,
+        'open_basedir' => '/var/www/users/jdoe/',
+        'allow_url_fopen' => 'false',
+        'disable_functions' => 'exec,shell_exec,passthru,system'
+    ]);
+
+    echo 'runkit';
+    return true;
+
+});
+
 $app->get('/load/{id}', function ($id) use ($app, $defaultCode) {
 
     $code = $app['redis']->get($id);
+    $success = true;
+
+    if (!$code) {
+        $success = false;
+    }
 
     return json_encode([
-        'success' => true,
+        'success' => $success,
         'code' => $code
     ]);
 
