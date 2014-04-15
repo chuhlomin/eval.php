@@ -111,17 +111,18 @@ if (id) {
     );
 }
 
-var os = $.client.os.toLowerCase();
+var data = browserDetection();
+var os = data.os;
 $('body').attr('data-os', os);
 
-if (os == 'mac') {
+if (os == 'osx') {
     KeyboardJS.on('command + enter', function() { sendForm(); });
     KeyboardJS.on('command + s', function() { saveForm(); return false; });
 
     $('.button-hotkey[data-os="windows"]').hide();
     $('.button-hotkey[data-os="mac"]').show();
 }
-else if (os == 'windows' || os == 'linux') {
+else if (os == 'win' || os == 'linux') {
     KeyboardJS.on('ctrl + enter', function() { sendForm(); });
     KeyboardJS.on('ctrl + s', function() { saveForm(); return false; });
 }
