@@ -2,22 +2,23 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
 
-        /*jshint: {
-            files: ['web/js/src/loader.js'],
-            options: {
-                // more options here if you want to override JSHint defaults
-                globals: {
-                    jQuery: true,
-                    console: true,
-                    module: true
+        less: {
+            development: {
+                options: {
+                    compress: true
+                },
+                files: {
+                    'web/css/src/bootstrap.css': 'web/css/src/bootstrap.less'
                 }
             }
-        },*/
+        },
 
         uglify: {
             main: {
                 files: {
                     'web/js/main.min.js': [
+                        'bower_components/jquery/dist/jquery.min.js',
+                        'bower_components/bootstrap/js/tooltip.js',
                         'bower_components/codemirror/lib/codemirror.js',
                         'bower_components/codemirror/mode/htmlmixed/htmlmixed.js',
                         'bower_components/codemirror/mode/xml/xml.js',
@@ -40,18 +41,17 @@ module.exports = function(grunt) {
                 files: {
                     'web/css/main.min.css': [
                         'bower_components/codemirror/lib/codemirror.css',
-                        'web/css/custom.css'
+                        'web/css/src/bootstrap.css',
+                        'web/css/src/custom.css'
                     ]
                 }
             }
         }
-
-        // concat: {}
     });
 
-    grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-less');
 
-    grunt.registerTask('default', ['uglify', 'cssmin']);
+    grunt.registerTask('default', ['less', 'uglify', 'cssmin']);
 };
