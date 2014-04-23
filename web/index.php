@@ -9,16 +9,20 @@ use Symfony\Component\HttpFoundation\Request;
 
 $app = new Silex\Application();
 
+$app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config.yml'));
 $app->register(new Silex\Provider\TwigServiceProvider(), ['twig.path' => __DIR__ . '/../views']);
 
-$app->register(new SilexPhpRedis\PhpRedisProvider(), array(
-    'redis.host' => '127.0.0.1',
-    'redis.port' => 6379,
-    'redis.timeout' => 30,
-    'redis.persistent' => true
-));
+$app->register(
+    new SilexPhpRedis\PhpRedisProvider(),
+    [
+        'redis.host' => $app['config']['redis']['host'],
+        'redis.port' => $app['config']['redis']['port'],
+        'redis.timeout' => $app['config']['redis']['timeout'],
+        'redis.persistent' => $app['config']['redis']['persistent']
+    ]
+);
 
-$app['debug'] = true;
+$app['debug'] = $app['config']['app']['debug'];
 
 $defaultCode = '
 <?php
