@@ -6,10 +6,18 @@ ini_set('display_errors', true);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Debug\ExceptionHandler;
+use Symfony\Component\Debug\ErrorHandler;
 
 $app = new Silex\Application();
 
 $app->register(new DerAlex\Silex\YamlConfigServiceProvider(__DIR__ . '/../config.yml'));
+
+$app['debug'] = $app['config']['app']['debug'];
+
+ErrorHandler::register();
+ExceptionHandler::register($app['debug']);
+
 $app->register(new Silex\Provider\TwigServiceProvider(), ['twig.path' => __DIR__ . '/../views']);
 
 $app->register(
@@ -21,8 +29,6 @@ $app->register(
         'redis.persistent' => $app['config']['redis']['persistent']
     ]
 );
-
-$app['debug'] = $app['config']['app']['debug'];
 
 $defaultCode = '
 <?php
@@ -126,6 +132,11 @@ $app->post('/save', function (Request $request) use ($app) {
         'success' => $success,
         'result' => $key
     ]);
+});
+
+$app->error(function (\Exception $e, $code) {
+    // return new \Symfony\Component\HttpFoundation\Response('We are sorry, but something went terribly wrong.');
+        echo 1;
 });
 
 $app->run();
